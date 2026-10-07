@@ -52,11 +52,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 3,
     borderTopColor: "#000",
     backgroundColor: "#fff",
+    paddingBottom: 25,
+    // again, just adding this for better spacing at the bottom of the phone. so it doesnt mess with the phones owns buttons
   },
   navIcon: {
     width: 26,
     height: 26,
-    // tintColor makes the icons more visible than their original colors. 
+    // tintColor makes the icons more visible than their original colors. The grey was too hard to see on a white background
     tintColor: "#000"
   },
 });
