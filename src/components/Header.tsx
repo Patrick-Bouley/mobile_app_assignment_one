@@ -34,7 +34,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
+    marginTop: 15,
+    marginBottom: -15,
+    // I added the margins to display better on both android and web. just helps with the symbol spacing
+    // and helps keep the contnent below it to not be squished down with it
   },
   titleSection: {
     alignItems: "center",
