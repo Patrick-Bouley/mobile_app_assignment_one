@@ -1,98 +1,89 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, Pressable, Platform, FlatList, Text, Image, View, StyleSheet } from "react-native";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ProfileHeader from "@/components/ProfileHeader";
+import IMAGES from "@/data/images"
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+/**
+ * Main screen for the Instagram-style profile clone.
+ * The page is split into reusable header/footer components with the image grid
+ * and the Alert button is controlled from this screen.*/
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+const Index =() => {
+
+  /**
+   * React Native's Alert works on iOS and Android.
+   * On web, window.alert is used so the same button also works in the browser.
+   * Again, I mostly did this in the web version so I made sure both worked*/
+  const handleAlert = () => {
+  if (Platform.OS === "web") {
+    window.alert("Alert Button pressed");
+  } else {
+    Alert.alert("Alert Button pressed");
+  }};
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <View style={styles.container}>
+      <Header />
+      <ProfileHeader />
+
+      {/* 
+        FlatList is used for Repeating Data Because it only renders the items
+        needed on the main screen. the numsColumns just splits the list into a three column grid
+       */}
+      <FlatList
+        data={IMAGES}
+        numColumns={3}
+        // React needs to track each image, so we give them a unique key
+        keyExtractor={(item) => item.id.toString()}
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => (
+      <Image
+        // URI is needed for an internet address style image. so we give the URL from the data set into it
+        source={{ uri: item.url }}
+        style={styles.gridImage}
+      />
+    )}
+  />
+
+  {/* The Alert button you can interact with. I just put it above the footer as it does need to be at the bottom of the page */}
+    <Pressable
+      style={styles.alertButton}
+      onPress={handleAlert}>
+    <Text style={styles.alertButtonText}>Alert</Text>
+    </Pressable>
+    <Footer />
+</View>
   );
-}
+};
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
+export default Index;
 
 const styles = StyleSheet.create({
   container: {
+    // I did this to keep the overal width about the same as a phone while working on the web side
+    width: Platform.OS === "web" ? 500 : "100%",
+    alignSelf: "center",
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "white",
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  gridImage: {
+    // I didnt make it 1/3rd so there could be added space around the images and not have the third row get cut off
+    width: "32.6%",
+    // aspect ratio just keeps the images square if they get resized weird with our width changes
+    aspectRatio: 1,
+    margin: 1.5,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  alertButton: {
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingVertical: 12,
+    backgroundColor: "#1877F2",
+    borderRadius: 6,
+    alignItems: "center",
   },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  alertButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
